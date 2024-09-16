@@ -15,7 +15,7 @@ function Home() {
             <li>create tours for all ages</li>
             <li>engaging experiences</li>
           </ul>
-          <Link to="/recipes" className="btn btn-primary">
+          <Link to="/projects" className="btn btn-primary">
             Create a Tour
           </Link>
         </div>
