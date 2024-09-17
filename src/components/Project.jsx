@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { getLocations } from "../data/projects";
 
 const Project = ({ projects }) => {
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { id } = useParams();
   const project = projects.find((r) => r.id == id);
 
   if (!project) {
     return <div>Project not found</div>;
+  }
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const data = await getLocations(id);
+        setLocations(data.sort((a, b) => a.location_order - b.location_order));
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    fetchLocations();
+  }, []);
+
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
   }
 
   const {

@@ -4,7 +4,9 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 import ProjectList from "./components/ProjectList";
 import Project from "./components/Project";
-import getProjects from "./data/projects"
+import LocationList from "./components/LocationList";
+import { getProjects } from "./data/projects"
+
 
 
 function App() {
@@ -53,6 +55,10 @@ function App() {
             <Route
               path="/projects/:id"
               element={<Project projects={projects} />}
+            />
+            <Route
+              path="/locations/:id"
+              element={<LocationList projects={projects}/>}
             />
           </Routes>
         </div>
