@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function RecipeList({ recipes }) {
+function ProjectList({ projects }) {
   return (
     <div>
       <div className="container mb-3">
@@ -12,24 +12,24 @@ function RecipeList({ recipes }) {
       </div>
       <div className="container">
         <ul className="list-group">
-          {recipes.map((recipe) => (
+          {projects?.map((project) => (
             <li
-              key={recipe.id}
+              key={project.id}
               className="list-group-item d-flex justify-content-between align-items-center"
             >
               <div className="col-6">
                 <div className="fw-bold">
                   <Link
-                    to={`/projects/${recipe.id}`}
+                    to={`/projects/${project.id}`}
                     className="text-decoration-none"
                   >
-                    {recipe.title}{" "}
+                    {project.title}{" "}
                     <span className="badge text-bg-success rounded-pill">
                       Published
                     </span>
                   </Link>
                 </div>
-                {recipe.description}
+                {project.description}
               </div>
 
               {/* Buttons aligned to the right */}
@@ -60,4 +60,4 @@ function RecipeList({ recipes }) {
   );
 }
 
-export default RecipeList;
+export default ProjectList;

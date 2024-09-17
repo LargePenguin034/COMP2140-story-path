@@ -1,15 +1,42 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Home from './components/Home';
-import RecipeList from './components/RecipeList';
-import Recipe from './components/Recipe';
-import { recipes } from './data/recipes';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./components/Home";
+import ProjectList from "./components/ProjectList";
+import Project from "./components/Project";
+import getProjects from "./data/projects"
+
 
 function App() {
-  const navLinks = [
-    { path: '/projects', text: 'PROJECTS' }
-  ];
+  const navLinks = [{ path: "/projects", text: "PROJECTS" }];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getProjects();
+        setProjects(data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <Router>
@@ -19,8 +46,14 @@ function App() {
         <div className="container mt-5">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<RecipeList recipes={recipes} />} />
-            <Route path="/projects/:id" element={<Recipe recipes={recipes} />} />
+            <Route
+              path="/projects"
+              element={<ProjectList projects={projects} />}
+            />
+            <Route
+              path="/projects/:id"
+              element={<Project projects={projects} />}
+            />
           </Routes>
         </div>
       </div>

@@ -1,13 +1,12 @@
-import fetch from 'node-fetch';
-
 // Base URL for the Storypath RESTful API
 const API_BASE_URL = 'https://0b5ff8b0.uqcloud.net/api';
 
 // JWT token for authorization, replace with your actual token from My Grades in Blackboard
-const JWT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic3R1ZGVudCIsInVzZXJuYW1lIjoiczQ3NDc5MDQifQ.x755-Yq5_1HVqEVCnv_vNXKOadrauvCIMSSpBBNwYF4';
+const JWT_TOKEN = import.meta.env.VITE_JWT_TOKEN;
 
 // Your UQ student username, used for row-level security to retrieve your records
-const USERNAME = 's4747904';
+const USERNAME = import.meta.env.VITE_USERNAME;
+
 
 /**
  * Helper function to handle API requests.
@@ -79,39 +78,13 @@ async function getProject(id) {
   return apiRequest(`/project?id=eq.${id}`);
 }
 
-/**
- * Main function to demonstrate API usage.
- * 
- * Creates a new project, lists all projects, and retrieves a single project by ID.
- */
-async function main() {
-  try {
-    // Create a new project with specific details
-    const newProject = {
-      title: 'My first Tour',
-      description: 'Description ....',
-      instructions: 'Follow these instructions',
-      initial_clue: 'First clue',
-      homescreen_display: 'Display initial clue',
-      is_published: false, // The project is not published initially
-      participant_scoring: 'Not Scored' // Scoring method for participants
-    };
-    const createdProject = await createProject(newProject);
-    console.log('Created Project:', createdProject);
-
-    // Retrieve and list all projects associated with the current user
-    const allProjects = await getProjects();
-    console.log('All Projects:', allProjects);
-
-    // If there are projects, retrieve the first one by its ID
-    if (allProjects.length > 0) {
-      const singleProject = await getProject(allProjects[0].id);
-      console.log('Single Project:', singleProject);
-    }
-
-    // Further functionality for other endpoints like /location can be added here...
-
-  } catch (error) {
-    console.error('Error:', error.message); // Log any errors that occur
-  }
+async function getLocations() {
+  return apiRequest(`/location`);
 }
+
+async function getLocation(id) {
+  return apiRequest(`/location?id=eq.${id}`);
+}
+
+
+export default getProjects;
