@@ -6,16 +6,14 @@ import ProjectList from "./components/ProjectList";
 import Project from "./components/Project";
 import LocationList from "./components/LocationList";
 import LocationEdit from "./components/LocationEdit";
-import { getProjects } from "./data/projects"
-
-
+import ProjectForm from "./components/ProjectEdit";
+import { getProjects } from "./data/projects";
 
 function App() {
   const navLinks = [{ path: "/projects", text: "PROJECTS" }];
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -31,7 +29,6 @@ function App() {
 
     fetchProjects();
   }, []);
-
 
   if (loading) {
     return <div>Loading...</div>;
@@ -59,11 +56,15 @@ function App() {
             />
             <Route
               path="/locations/:id"
-              element={<LocationList projects={projects}/>}
+              element={<LocationList projects={projects} />}
             />
             <Route
-              path="/locationedit/:id?"
-              element={<LocationEdit/>}
+              path="/locationedit/:projectid/:id?"
+              element={<LocationEdit />}
+            />
+            <Route
+              path="/projectedit/:projectid?"
+              element={<ProjectForm />}
             />
           </Routes>
         </div>

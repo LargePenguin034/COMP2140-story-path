@@ -6,7 +6,11 @@ function ProjectList({ projects }) {
   const handleViewLocations = (projectId) => {
     navigate(`/locations/${projectId}`);
   };
-  
+
+  const handleEdit = (projectId) => {
+    navigate(`/projectedit/${projectId}`);
+  };
+
   return (
     <div>
       <div className="container mb-3">
@@ -39,7 +43,11 @@ function ProjectList({ projects }) {
 
               <div className="d-flex ms-auto align-self-start">
                 <div className="input-group">
-                  <button className="btn btn-outline-warning" type="button">
+                  <button
+                    className="btn btn-outline-warning"
+                    type="button"
+                    onClick={() => handleEdit(project.id)}
+                  >
                     Edit
                   </button>
                   <button
@@ -49,10 +57,7 @@ function ProjectList({ projects }) {
                   >
                     View Locations
                   </button>
-                  <button
-                    className="btn btn-outline-danger ms-2"
-                    type="button"
-                  >
+                  <button className="btn btn-outline-danger ms-2" type="button">
                     Delete
                   </button>
                 </div>

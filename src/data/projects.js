@@ -43,6 +43,10 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
+  if (response.status == 204) {
+    return;
+  }
+
   // Return the response as a JSON object
   return response.json();
 }
@@ -53,7 +57,7 @@ async function apiRequest(endpoint, method = "GET", body = null) {
  * @param {object} project - The project data to insert.
  * @returns {Promise<object>} - The created project object returned by the API.
  */
-async function createProject(project) {
+export async function createProject(project) {
   return apiRequest("/project", "POST", project);
 }
 
@@ -73,8 +77,12 @@ export async function getProjects() {
  * @param {string} id - The ID of the project to retrieve.
  * @returns {Promise<object>} - The project object matching the ID.
  */
-async function getProject(id) {
+export async function getProject(id) {
   return apiRequest(`/project?id=eq.${id}`);
+}
+
+export async function updateProject(id, data) {
+  return apiRequest(`/project?id=eq.${id}`, "PATCH", data);
 }
 
 export async function getLocations(id) {
@@ -91,6 +99,21 @@ export async function updateLocationOrder(id, loc) {
 
 export async function updateLocation(id, data) {
   return apiRequest(`/location?id=eq.${id}`, "PATCH", data);
+}
+
+export async function deleteLocation(id) {
+  apiRequest(`/location?id=eq.${id}`, "DELETE");
+  return;
+}
+
+export async function createLocation(projectid, data) {
+  const orderMax = await getLocations(projectid);
+  const requestData = {
+    ...data,
+    project_id: projectid,
+    location_order: orderMax.length,
+  };
+  return apiRequest(`/location`, "POST", requestData);
 }
 
 export async function getAllLocations() {

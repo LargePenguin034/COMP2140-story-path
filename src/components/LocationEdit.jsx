@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { getLocation } from "../data/projects";
-import { updateLocation } from "../data/projects";
+import { updateLocation, createLocation } from "../data/projects";
 
 const LocationForm = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +16,9 @@ const LocationForm = () => {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state for invalid ID
-  const { id } = useParams(); // Fetch ID from URL
+  const { projectid, id } = useParams(); // Fetch ID from URL
+  const [success, setSuccess] = useState(null); // Success state for successful update
+  const [fade, setFade] = useState(false); // State to trigger the fade effect
 
   // Fetch the location data when id is present
   useEffect(() => {
@@ -34,8 +36,8 @@ const LocationForm = () => {
           });
           setLoading(false);
         } else {
-            setLoading(false);
-            setError("Invalid Location")
+          setLoading(false);
+          setError("Invalid Location");
         }
       });
     } else {
@@ -55,9 +57,20 @@ const LocationForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (id) {
-        const response = await updateLocation(id, formData);
-        console.log(response);
-    };
+      await updateLocation(id, formData);
+      setSuccess("Sucessfuly Updated");
+    } else {
+      await createLocation(projectid, formData);
+    }
+    // Show the message and trigger fade effect after 5 seconds
+    setFade(false); // Reset fade state
+    setTimeout(() => {
+      setFade(true);
+    }, 1000); // Start fade animation after rendering success message
+
+    setTimeout(() => {
+      setSuccess(null); // Remove message after fade-out
+    }, 5000); // Wait 5 seconds before completely removing the success message
   };
 
   if (loading) {
@@ -70,6 +83,11 @@ const LocationForm = () => {
 
   return (
     <div className="container mt-5">
+      {success && (
+        <div className={`alert alert-success ${fade ? "fade-out" : ""}`}>
+          {success}
+        </div>
+      )}
       <h2>Location Form</h2>
       <Form onSubmit={handleSubmit}>
         {/* Location Name (Text input) */}
@@ -97,9 +115,11 @@ const LocationForm = () => {
             <option value="" disabled>
               Select Trigger
             </option>
-            <option value="1">Trigger 1</option>
-            <option value="2">Trigger 2</option>
-            <option value="3">Trigger 3</option>
+            <option value="Location Entry">Location Entry</option>
+            <option value="QR Code Scan">QR Code Scan</option>
+            <option value="Location Entry and QR Code Scan">
+              Location Entry and QR Code Scan
+            </option>
           </Form.Select>
         </Form.Group>
 

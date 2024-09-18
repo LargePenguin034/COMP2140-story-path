@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { getLocations, updateLocationOrder } from "../data/projects";
+import {
+  getLocations,
+  updateLocationOrder,
+  deleteLocation,
+} from "../data/projects";
 
 function LocationList({ projects }) {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
-
   const navigate = useNavigate();
-  const handleViewLocations = (locationId) => {
-    navigate(`/locationedit/${locationId}`);
+
+  const handleViewLocations = (projectId, locationId) => {
+    navigate(`/locationedit/${projectId}/${locationId}`);
   };
 
   const project = projects.find((r) => r.id == id);
@@ -33,16 +37,15 @@ function LocationList({ projects }) {
     };
 
     fetchLocations();
-  }, []);
+  }, [id]);
 
   const handleMoveUp = async (index) => {
-    if (index === 0) return; // Cannot move up the first item
+    if (index === 0) return;
 
     const newLocations = [...locations];
+    const temp1 = { ...newLocations[index] };
+    const temp2 = { ...newLocations[index - 1] };
 
-    // Swap location_order values
-    const temp1 = JSON.parse(JSON.stringify(newLocations[index]));
-    const temp2 = JSON.parse(JSON.stringify(newLocations[index - 1]));
     newLocations[index].location_order = temp2.location_order;
     newLocations[index - 1].location_order = temp1.location_order;
 
@@ -53,13 +56,12 @@ function LocationList({ projects }) {
   };
 
   const handleMoveDown = async (index) => {
-    if (index === locations.length - 1) return; // Cannot move down the last item
+    if (index === locations.length - 1) return;
 
     const newLocations = [...locations];
+    const temp1 = { ...newLocations[index] };
+    const temp2 = { ...newLocations[index + 1] };
 
-    // Swap location_order values
-    const temp1 = JSON.parse(JSON.stringify(newLocations[index]));
-    const temp2 = JSON.parse(JSON.stringify(newLocations[index + 1]));
     newLocations[index].location_order = temp2.location_order;
     newLocations[index + 1].location_order = temp1.location_order;
 
@@ -67,6 +69,33 @@ function LocationList({ projects }) {
 
     await updateLocationOrder(temp1.id, temp2.location_order);
     await updateLocationOrder(temp2.id, temp1.location_order);
+  };
+
+  const handleDelete = async (index) => {
+    const locationId = locations[index].id;
+    try {
+      deleteLocation(locationId);
+
+      // Filter out the deleted location
+      const newLocations = locations.filter((_, i) => i !== index);
+
+      // Update location_order to match new index positions
+      const updatedLocations = newLocations.map((location, idx) => ({
+        ...location,
+        location_order: idx,
+      }));
+
+      setLocations(updatedLocations);
+
+      // Optionally, update the location orders on the server
+      await Promise.all(
+        updatedLocations.map((location) =>
+          updateLocationOrder(location.id, location.location_order)
+        )
+      );
+    } catch (error) {
+      setError(error);
+    }
   };
 
   if (loading) {
@@ -81,7 +110,7 @@ function LocationList({ projects }) {
     <div>
       <div className="container mb-3">
         <h1 className="mb-4">{project.title}</h1>
-        <Link to="/locationedit" className="btn btn-primary">
+        <Link to={`/locationedit/${project.id}`} className="btn btn-primary">
           Add Location
         </Link>
       </div>
@@ -95,16 +124,7 @@ function LocationList({ projects }) {
                 className="list-group-item d-flex justify-content-between align-items-center"
               >
                 <div className="col-6">
-                  {location.location_name}
-                  <div className="fw-bold">
-                    <Link
-                      to={`/projects/${location.id}`}
-                      className="text-decoration-none"
-                    >
-                      {location.title}{" "}
-                    </Link>
-                  </div>
-                  location order: {location.location_order}
+                  <div className="fw-bold">{location.location_name}</div>
                 </div>
                 <div className="d-flex ms-auto align-self-start">
                   <div className="input-group">
@@ -129,11 +149,17 @@ function LocationList({ projects }) {
                     <button
                       className="btn btn-outline-warning"
                       type="button"
-                      onClick={() => handleViewLocations(location.id)}
+                      onClick={() =>
+                        handleViewLocations(project.id, location.id)
+                      }
                     >
                       Edit
                     </button>
-                    <button className="btn btn-outline-danger" type="button">
+                    <button
+                      className="btn btn-outline-danger"
+                      type="button"
+                      onClick={() => handleDelete(index)}
+                    >
                       Delete
                     </button>
                     <button className="btn btn-outline-success" type="button">

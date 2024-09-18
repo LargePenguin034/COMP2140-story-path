@@ -9,3 +9,8 @@
   position:fixed;
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);
   }
+
+  .fade-out {
+    opacity: 0;
+    transition: opacity 3s ease-in-out
+  }
