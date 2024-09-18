@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import ProjectList from "./components/ProjectList";
 import Project from "./components/Project";
 import LocationList from "./components/LocationList";
+import LocationEdit from "./components/LocationEdit";
 import { getProjects } from "./data/projects"
 
 
@@ -59,6 +60,10 @@ function App() {
             <Route
               path="/locations/:id"
               element={<LocationList projects={projects}/>}
+            />
+            <Route
+              path="/locationedit/:id"
+              element={<LocationEdit/>}
             />
           </Routes>
         </div>

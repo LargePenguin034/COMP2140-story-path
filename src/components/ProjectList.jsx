@@ -1,7 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ProjectList({ projects }) {
+  const navigate = useNavigate();
+  const handleViewLocations = (projectId) => {
+    navigate(`/locations/${projectId}`);
+  };
+  
   return (
     <div>
       <div className="container mb-3">
@@ -32,7 +37,6 @@ function ProjectList({ projects }) {
                 {project.description}
               </div>
 
-              {/* Buttons aligned to the right */}
               <div className="d-flex ms-auto align-self-start">
                 <div className="input-group">
                   <button className="btn btn-outline-warning" type="button">
@@ -41,6 +45,7 @@ function ProjectList({ projects }) {
                   <button
                     className="btn btn-outline-primary ms-2"
                     type="button"
+                    onClick={() => handleViewLocations(project.id)}
                   >
                     View Locations
                   </button>

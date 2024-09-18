@@ -82,7 +82,7 @@ export async function getLocations(id) {
 }
 
 export async function updateLocationOrder(id, loc) {
-  return apiRequest(`/location?.eq${id}`, "PATCH", { location_order: loc });
+  return apiRequest(`/location?id=eq.${id}`, "PATCH", { location_order: loc });
 }
 
 export async function getAllLocations() {

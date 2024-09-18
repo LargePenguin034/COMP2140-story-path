@@ -31,10 +31,6 @@ function LocationList({ projects }) {
     fetchLocations();
   }, []);
 
-  useEffect(() => {
-    console.log("Locations updated:", JSON.parse(JSON.stringify(locations)));
-  }, [locations]);
-
 
   const handleMoveUp = async (index) => {
     if (index === 0) return; // Cannot move up the first item
@@ -42,14 +38,16 @@ function LocationList({ projects }) {
     const newLocations = [...locations];
 
     // Swap location_order values
-    const temp = newLocations[index].location_order;
-    newLocations[index].location_order = newLocations[index - 1].location_order;
-    newLocations[index - 1].location_order = temp;
+    const temp1 = JSON.parse(JSON.stringify(newLocations[index]));
+    const temp2 = JSON.parse(JSON.stringify(newLocations[index-1]));
+    newLocations[index].location_order = temp2.location_order;
+    newLocations[index - 1].location_order = temp1.location_order;
 
     setLocations(newLocations);
 
-    await updateLocationOrder(id, newLocations[index].id, newLocations[index].location_order);
-    await updateLocationOrder(id, newLocations[index + 1].id, newLocations[index + 1].location_order);
+
+    await updateLocationOrder(temp1.id, temp2.location_order);
+    await updateLocationOrder(temp2.id,  temp1.location_order)
 };
 
 
@@ -59,14 +57,16 @@ const handleMoveDown = async (index) => {
     const newLocations = [...locations];
 
     // Swap location_order values
-    const temp = newLocations[index].location_order;
-    newLocations[index].location_order = newLocations[index + 1].location_order;
-    newLocations[index + 1].location_order = temp;
+    const temp1 = JSON.parse(JSON.stringify(newLocations[index]));
+    const temp2 = JSON.parse(JSON.stringify(newLocations[index+1]));
+    newLocations[index].location_order = temp2.location_order;
+    newLocations[index + 1].location_order = temp1.location_order;
 
     setLocations(newLocations);
 
-    await updateLocationOrder(id, newLocations[index].id, newLocations[index].location_order);
-    await updateLocationOrder(id, newLocations[index + 1].id, newLocations[index + 1].location_order)
+
+    await updateLocationOrder(temp1.id, temp2.location_order);
+    await updateLocationOrder(temp2.id,  temp1.location_order)
 
 };
 
@@ -107,7 +107,7 @@ const handleMoveDown = async (index) => {
                       {location.title}{" "}
                     </Link>
                   </div>
-                  {location.description}
+                  location order: {location.location_order}
                 </div>
                 <div className="d-flex ms-auto align-self-start">
                   <div className="input-group">
