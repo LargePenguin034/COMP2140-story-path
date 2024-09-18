@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { getLocations, updateLocationOrder } from "../data/projects";
 
@@ -9,6 +9,10 @@ function LocationList({ projects }) {
   const [error, setError] = useState(null);
   const { id } = useParams();
 
+  const navigate = useNavigate();
+  const handleViewLocations = (locationId) => {
+    navigate(`/locationedit/${locationId}`);
+  };
 
   const project = projects.find((r) => r.id == id);
 
@@ -31,7 +35,6 @@ function LocationList({ projects }) {
     fetchLocations();
   }, []);
 
-
   const handleMoveUp = async (index) => {
     if (index === 0) return; // Cannot move up the first item
 
@@ -39,38 +42,32 @@ function LocationList({ projects }) {
 
     // Swap location_order values
     const temp1 = JSON.parse(JSON.stringify(newLocations[index]));
-    const temp2 = JSON.parse(JSON.stringify(newLocations[index-1]));
+    const temp2 = JSON.parse(JSON.stringify(newLocations[index - 1]));
     newLocations[index].location_order = temp2.location_order;
     newLocations[index - 1].location_order = temp1.location_order;
 
     setLocations(newLocations);
 
-
     await updateLocationOrder(temp1.id, temp2.location_order);
-    await updateLocationOrder(temp2.id,  temp1.location_order)
-};
+    await updateLocationOrder(temp2.id, temp1.location_order);
+  };
 
-
-const handleMoveDown = async (index) => {
+  const handleMoveDown = async (index) => {
     if (index === locations.length - 1) return; // Cannot move down the last item
 
     const newLocations = [...locations];
 
     // Swap location_order values
     const temp1 = JSON.parse(JSON.stringify(newLocations[index]));
-    const temp2 = JSON.parse(JSON.stringify(newLocations[index+1]));
+    const temp2 = JSON.parse(JSON.stringify(newLocations[index + 1]));
     newLocations[index].location_order = temp2.location_order;
     newLocations[index + 1].location_order = temp1.location_order;
 
     setLocations(newLocations);
 
-
     await updateLocationOrder(temp1.id, temp2.location_order);
-    await updateLocationOrder(temp2.id,  temp1.location_order)
-
-};
-
-
+    await updateLocationOrder(temp2.id, temp1.location_order);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -84,7 +81,7 @@ const handleMoveDown = async (index) => {
     <div>
       <div className="container mb-3">
         <h1 className="mb-4">{project.title}</h1>
-        <Link to="/projects" className="btn btn-primary">
+        <Link to="/locationedit" className="btn btn-primary">
           Add Location
         </Link>
       </div>
@@ -129,7 +126,11 @@ const handleMoveDown = async (index) => {
                       <i className="bi bi-arrow-down"></i>
                     </button>
 
-                    <button className="btn btn-outline-warning" type="button">
+                    <button
+                      className="btn btn-outline-warning"
+                      type="button"
+                      onClick={() => handleViewLocations(location.id)}
+                    >
                       Edit
                     </button>
                     <button className="btn btn-outline-danger" type="button">

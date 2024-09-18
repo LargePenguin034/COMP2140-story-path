@@ -81,8 +81,16 @@ export async function getLocations(id) {
   return apiRequest(`/location?project_id=eq.${id}`);
 }
 
+export async function getLocation(id) {
+  return apiRequest(`/location?id=eq.${id}`);
+}
+
 export async function updateLocationOrder(id, loc) {
   return apiRequest(`/location?id=eq.${id}`, "PATCH", { location_order: loc });
+}
+
+export async function updateLocation(id, data) {
+  return apiRequest(`/location?id=eq.${id}`, "PATCH", data);
 }
 
 export async function getAllLocations() {

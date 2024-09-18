@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getLocations } from "../data/projects";
 
+
 const Project = ({ projects }) => {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);

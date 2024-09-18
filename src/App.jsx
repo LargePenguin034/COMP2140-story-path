@@ -62,7 +62,7 @@ function App() {
               element={<LocationList projects={projects}/>}
             />
             <Route
-              path="/locationedit/:id"
+              path="/locationedit/:id?"
               element={<LocationEdit/>}
             />
           </Routes>

@@ -1,20 +1,50 @@
-import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
-
-
+import React, { useState, useEffect } from "react";
+import { Form, Button } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { getLocation } from "../data/projects";
+import { updateLocation } from "../data/projects";
 
 const LocationForm = () => {
   const [formData, setFormData] = useState({
-    locationName: '',
-    locationTrigger: '',
-    locationPosition: '',
-    scorePoints: '',
-    clue: '',
-    locationContent: '',
+    location_name: "",
+    location_trigger: "",
+    location_position: "",
+    score_points: "",
+    clue: "",
+    location_content: "",
   });
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state for invalid ID
+  const { id } = useParams(); // Fetch ID from URL
+
+  // Fetch the location data when id is present
+  useEffect(() => {
+    if (id) {
+      // Simulate API call to get location data based on id
+      getLocation(id).then((data) => {
+        if (data.length > 0) {
+          setFormData({
+            location_name: data[0].location_name || "",
+            location_trigger: data[0].location_trigger || "",
+            location_position: data[0].location_position || "",
+            score_points: data[0].score_points || "",
+            clue: data[0].clue || "",
+            location_content: data[0].location_content || "",
+          });
+          setLoading(false);
+        } else {
+            setLoading(false);
+            setError("Invalid Location")
+        }
+      });
+    } else {
+      setLoading(false); // No id, create mode, stop loading
+    }
+  }, [id]);
 
   const handleEditorChange = (content) => {
-    setFormData({ ...formData, locationContent: content });
+    setFormData({ ...formData, location_content: content });
   };
 
   const handleChange = (e) => {
@@ -22,38 +52,51 @@ const LocationForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData); // You can handle form submission here
+    if (id) {
+        const response = await updateLocation(id, formData);
+        console.log(response);
+    };
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading while fetching data
+  }
+
+  if (error) {
+    return <div className="alert alert-danger">{error}</div>; // Display error message if ID is invalid
+  }
 
   return (
     <div className="container mt-5">
       <h2>Location Form</h2>
       <Form onSubmit={handleSubmit}>
         {/* Location Name (Text input) */}
-        <Form.Group className="mb-3" controlId="locationName">
+        <Form.Group className="mb-3" controlId="location_name">
           <Form.Label>Location Name</Form.Label>
           <Form.Control
             type="text"
-            name="locationName"
+            name="location_name"
             placeholder="Enter Location Name"
-            value={formData.locationName}
+            value={formData.location_name}
             onChange={handleChange}
             required
           />
         </Form.Group>
 
         {/* Location Trigger (DropDown) */}
-        <Form.Group className="mb-3" controlId="locationTrigger">
+        <Form.Group className="mb-3" controlId="location_trigger">
           <Form.Label>Location Trigger</Form.Label>
           <Form.Select
-            name="locationTrigger"
-            value={formData.locationTrigger}
+            name="location_trigger"
+            value={formData.location_trigger}
             onChange={handleChange}
             required
           >
-            <option value="" disabled>Select Trigger</option>
+            <option value="" disabled>
+              Select Trigger
+            </option>
             <option value="1">Trigger 1</option>
             <option value="2">Trigger 2</option>
             <option value="3">Trigger 3</option>
@@ -61,26 +104,26 @@ const LocationForm = () => {
         </Form.Group>
 
         {/* Location Position (Text input) */}
-        <Form.Group className="mb-3" controlId="locationPosition">
+        <Form.Group className="mb-3" controlId="location_position">
           <Form.Label>Location Position</Form.Label>
           <Form.Control
             type="text"
-            name="locationPosition"
+            name="location_position"
             placeholder="Enter Location Position"
-            value={formData.locationPosition}
+            value={formData.location_position}
             onChange={handleChange}
             required
           />
         </Form.Group>
 
         {/* Score Points (Number Input) */}
-        <Form.Group className="mb-3" controlId="scorePoints">
+        <Form.Group className="mb-3" controlId="score_points">
           <Form.Label>Score Points</Form.Label>
           <Form.Control
             type="number"
-            name="scorePoints"
+            name="score_points"
             placeholder="Enter Score Points"
-            value={formData.scorePoints}
+            value={formData.score_points}
             onChange={handleChange}
             required
           />
