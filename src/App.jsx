@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import ProjectList from "./components/ProjectList";
-import Project from "./components/Project";
+import ProjectPreview from "./components/ProjectPreview";
 import LocationList from "./components/LocationList";
 import LocationEdit from "./components/LocationEdit";
 import ProjectForm from "./components/ProjectEdit";
@@ -26,8 +26,8 @@ function App() {
               element={<ProjectList/>}
             />
             <Route
-              path="/projects/:id"
-              element={<Project/>}
+              path="/projects/:id/:location_order?"
+              element={<ProjectPreview/>}
             />
             <Route
               path="/locations/:id"

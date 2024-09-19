@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getProject } from "../data/projects";
 import { updateProject, createProject } from "../data/projects";
 
@@ -19,6 +19,7 @@ const ProjectForm = () => {
   const { projectid } = useParams(); // Fetch ID from URL
   const [success, setSuccess] = useState(null); // Success state for successful update
   const [fade, setFade] = useState(false); // State to trigger the fade effect
+  const navigate = useNavigate();
 
   // Fetch the location data when id is present
   useEffect(() => {
@@ -59,6 +60,7 @@ const ProjectForm = () => {
         setSuccess("Sucessfuly Updated");
       } else {
         await createProject(formData);
+        navigate(`/projects`)
         setSuccess("Sucessfuly Created");
       }
     } catch {setError('No Changes were made')}
@@ -93,7 +95,19 @@ const ProjectForm = () => {
           {error}
         </div>
       )}
-      <h2>Project Edit</h2>
+      <div className="row mb-3">
+        <div className="col-9">
+          <h1>{projectid? "Edit Project" : "Add Project"}</h1>
+        </div>
+        <div className="col-3 d-flex justify-content-end">
+          <button
+            className="btn btn-danger"
+            onClick={() => navigate(`/projects`)}
+          >
+            Back to projects
+          </button>
+        </div>
+      </div>
       <Form onSubmit={handleSubmit}>
         {/* Title (Text input) */}
         <Form.Group className="mb-3" controlId="title">

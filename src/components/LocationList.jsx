@@ -119,7 +119,19 @@ function LocationList() {
   return (
     <div>
       <div className="container mb-3">
-        <h1 className="mb-4">{project.title}</h1>
+              <div className="row mb-3">
+        <div className="col-9">
+          <h1>{project.title}</h1>
+        </div>
+        <div className="col-3 d-flex justify-content-end">
+          <button
+            className="btn btn-danger"
+            onClick={() => navigate(`/projects`)}
+          >
+            Back to projects
+          </button>
+        </div>
+      </div>
         <Link to={`/locationedit/${project.id}`} className="btn btn-primary">
           Add Location
         </Link>

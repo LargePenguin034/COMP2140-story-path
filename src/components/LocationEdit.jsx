@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getLocation } from "../data/projects";
 import { updateLocation, createLocation } from "../data/projects";
 
@@ -19,7 +19,7 @@ const LocationForm = () => {
   const { projectid, id } = useParams(); // Fetch ID from URL
   const [success, setSuccess] = useState(null); // Success state for successful update
   const [fade, setFade] = useState(false); // State to trigger the fade effect
-
+  const navigate = useNavigate();
   // Fetch the location data when id is present
   useEffect(() => {
     if (id) {
@@ -62,6 +62,7 @@ const LocationForm = () => {
         setSuccess("Sucessfuly Updated");
       } else {
         await createLocation(projectid, formData);
+        navigate(`/locations/${projectid}`)
         setSuccess("Sucessfuly Created");
       }
     } catch {
@@ -98,7 +99,19 @@ const LocationForm = () => {
           {error}
         </div>
       )}
-      <h2>Location Form</h2>
+      <div className="row mb-3">
+        <div className="col-9">
+          <h1>{id? "Edit Location" : "Add Location"}</h1>
+        </div>
+        <div className="col-3 d-flex justify-content-end">
+          <button
+            className="btn btn-danger"
+            onClick={() => navigate(`/locations/${projectid}`)}
+          >
+            Back to Location
+          </button>
+        </div>
+      </div>
       <Form onSubmit={handleSubmit}>
         {/* Location Name (Text input) */}
         <Form.Group className="mb-3" controlId="location_name">
