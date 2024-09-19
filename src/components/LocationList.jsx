@@ -5,12 +5,14 @@ import {
   getLocations,
   updateLocationOrder,
   deleteLocation,
+  getProject,
 } from "../data/projects";
 
-function LocationList({ projects }) {
+function LocationList() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [project, setProject] = useState();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -18,26 +20,34 @@ function LocationList({ projects }) {
     navigate(`/locationedit/${projectId}/${locationId}`);
   };
 
-  const project = projects.find((r) => r.id == id);
-
-  if (!project) {
-    return <div>Project not found</div>;
-  }
-
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const data = await getLocations(id);
-        setLocations(data);
-        setLoading(false);
+        setLocations(data.sort((a, b) => a.location_order - b.location_order));
       } catch (error) {
         setError(error);
-        setLoading(false);
       }
     };
 
-    fetchLocations();
-  }, [id]);
+    const fetchProject = async () => {
+      try {
+        const data = await getProject(id);
+        setProject(data[0]);
+      } catch (error) {
+        setError(error);
+        setProject(null);
+      }
+    };
+
+    const fetchData = async () => {
+      setLoading(true);
+      await Promise.all([fetchProject(), fetchLocations()]);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   const handleMoveUp = async (index) => {
     if (index === 0) return;

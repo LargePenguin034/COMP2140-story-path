@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getProjects } from "../data/projects";
 
-function ProjectList({ projects }) {
+function ProjectList() {
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
   const handleViewLocations = (projectId) => {
     navigate(`/locations/${projectId}`);
   };
@@ -10,6 +12,19 @@ function ProjectList({ projects }) {
   const handleEdit = (projectId) => {
     navigate(`/projectedit/${projectId}`);
   };
+
+  // Fetch projects from API when the component mounts
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects(); 
+        setProjects(response);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   return (
     <div>
