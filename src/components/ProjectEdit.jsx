@@ -14,7 +14,6 @@ const ProjectForm = () => {
     initial_clue: "",
     homescreen_display: "",
   });
-  const [data, setData] = useState();
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state for invalid ID
   const { projectid } = useParams(); // Fetch ID from URL
@@ -30,7 +29,7 @@ const ProjectForm = () => {
           setFormData({
             title: data[0].title || "",
             description: data[0].description || "",
-            is_published: data[0].is_published || "",
+            is_published: data[0].is_published || false,
             participant_scoring: data[0].participant_scoring || "",
             instructions: data[0].instructions || "",
             initial_clue: data[0].initial_clue || "",
@@ -54,12 +53,16 @@ const ProjectForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (projectid) {
-      await updateProject(projectid, formData);
-      setSuccess("Sucessfuly Updated");
-    } else {
-      await createProject(formData);
-    }
+    try {
+      if (projectid) {
+        await updateProject(projectid, formData);
+        setSuccess("Sucessfuly Updated");
+      } else {
+        await createProject(formData);
+        setSuccess("Sucessfuly Created");
+      }
+    } catch {setError('No Changes were made')}
+
     // Show the message and trigger fade effect after 5 seconds
     setFade(false); // Reset fade state
     setTimeout(() => {
@@ -68,22 +71,26 @@ const ProjectForm = () => {
 
     setTimeout(() => {
       setSuccess(null); // Remove message after fade-out
-    }, 5000); // Wait 5 seconds before completely removing the success message
+      setError(null);
+    }, 4500); // Wait 5 seconds before completely removing the success message
   };
 
   if (loading) {
     return <div>Loading...</div>; // Show loading while fetching data
   }
 
-  if (error) {
-    return <div className="alert alert-danger">{error}</div>; // Display error message if ID is invalid
-  }
 
   return (
     <div className="container mt-5">
       {success && (
         <div className={`alert alert-success ${fade ? "fade-out" : ""}`}>
           {success}
+        </div>
+      )}
+
+      {error && (
+        <div className={`alert alert-danger ${fade ? "fade-out" : ""}`}>
+          {error}
         </div>
       )}
       <h2>Project Edit</h2>
@@ -121,12 +128,12 @@ const ProjectForm = () => {
             type="checkbox"
             id="is_published"
             label="Published"
-            checked={formData.is_published === "true"}
+            checked={formData.is_published == true}
             onChange={(e) =>
               handleChange({
                 target: {
                   name: "is_published",
-                  value: e.target.checked ? "true" : "false",
+                  value: e.target.checked ? true : false,
                 },
               })
             }

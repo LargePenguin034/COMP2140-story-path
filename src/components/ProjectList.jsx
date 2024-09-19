@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getProjects } from "../data/projects";
+import { getProjects, deleteProject } from "../data/projects";
 
 function ProjectList() {
   const navigate = useNavigate();
@@ -13,11 +13,19 @@ function ProjectList() {
     navigate(`/projectedit/${projectId}`);
   };
 
+  const handleDelete = (projectId) => {
+    deleteProject(projectId);
+
+    const newProject = projects.filter((project) => project.id !== projectId);
+
+    setProjects(newProject);
+  };
+
   // Fetch projects from API when the component mounts
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await getProjects(); 
+        const response = await getProjects();
         setProjects(response);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -30,7 +38,7 @@ function ProjectList() {
     <div>
       <div className="container mb-3">
         <h1 className="mb-4">Projects</h1>
-        <Link to="/projects" className="btn btn-primary">
+        <Link to="/projectedit" className="btn btn-primary">
           Add Project
         </Link>
       </div>
@@ -48,8 +56,14 @@ function ProjectList() {
                     className="text-decoration-none"
                   >
                     {project.title}{" "}
-                    <span className="badge text-bg-success rounded-pill">
-                      Published
+                    <span
+                      className={`badge rounded-pill ${
+                        project.is_published
+                          ? "text-bg-success"
+                          : "text-bg-secondary"
+                      }`}
+                    >
+                      {project.is_published ? "Published" : "Not Published"}
                     </span>
                   </Link>
                 </div>
@@ -72,7 +86,11 @@ function ProjectList() {
                   >
                     View Locations
                   </button>
-                  <button className="btn btn-outline-danger ms-2" type="button">
+                  <button
+                    className="btn btn-outline-danger ms-2"
+                    type="button"
+                    onClick={() => handleDelete(project.id)}
+                  >
                     Delete
                   </button>
                 </div>

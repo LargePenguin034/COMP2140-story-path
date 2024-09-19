@@ -56,11 +56,16 @@ const LocationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (id) {
-      await updateLocation(id, formData);
-      setSuccess("Sucessfuly Updated");
-    } else {
-      await createLocation(projectid, formData);
+    try {
+      if (id) {
+        await updateLocation(id, formData);
+        setSuccess("Sucessfuly Updated");
+      } else {
+        await createLocation(projectid, formData);
+        setSuccess("Sucessfuly Created");
+      }
+    } catch {
+      setError("No changes were made");
     }
     // Show the message and trigger fade effect after 5 seconds
     setFade(false); // Reset fade state
@@ -86,6 +91,11 @@ const LocationForm = () => {
       {success && (
         <div className={`alert alert-success ${fade ? "fade-out" : ""}`}>
           {success}
+        </div>
+      )}
+      {error && (
+        <div className={`alert alert-danger ${fade ? "fade-out" : ""}`}>
+          {error}
         </div>
       )}
       <h2>Location Form</h2>

@@ -82,7 +82,13 @@ export async function getProject(id) {
 }
 
 export async function updateProject(id, data) {
+  console.log(data)
   return apiRequest(`/project?id=eq.${id}`, "PATCH", data);
+}
+
+export async function deleteProject(id) {
+  apiRequest(`/project?id=eq.${id}`, "DELETE");
+  return;
 }
 
 export async function getLocations(id) {
