@@ -18,3 +18,17 @@
   .cursor-pointer {
     cursor: pointer;
   }
+
+  .location-content img {
+    max-width: 100%; /* Makes images responsive */
+    height: auto; /* Maintains aspect ratio */
+  }
+
+  .location-content {
+    width: 100%; /* Set your desired width */
+    height: 100%; /* Set your desired height */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc; /* Optional: Add a border for visibility */
+  }
+  

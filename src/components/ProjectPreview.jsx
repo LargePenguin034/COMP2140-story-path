@@ -9,10 +9,10 @@ const ProjectPreview = () => {
   const [error, setError] = useState(null);
   const [project, setProject] = useState();
   const navigate = useNavigate();
-  const { id, location_order } = useParams();
+  const { id, location_id} = useParams();
 
-  const handleLocation = (location_order) => {
-    navigate(`/projects/${project.id}/${location_order}`);
+  const handleLocation = (location_id) => {
+    navigate(`/projects/${project.id}/${location_id}`);
   };
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const ProjectPreview = () => {
   const totalLocations = locations.length;
 
   const selectedLocation = locations.find(
-    (location) => location.location_order === parseInt(location_order)
+    (location) => location.id === parseInt(location_id)
   );
 
   if (loading) {
@@ -96,8 +96,8 @@ const ProjectPreview = () => {
             {locations.map((location) => (
               <a
                 key={location.id}
-                className={`cursor-pointer list-group-item list-group-item-action ${(location.location_order == location_order) ? "active" : ""}`}
-                onClick={() => handleLocation(location.location_order)}
+                className={`cursor-pointer list-group-item list-group-item-action ${(location.id == location_id) ? "active" : ""}`}
+                onClick={() => handleLocation(location.id)}
               >
                 {location.location_name}
               </a>
@@ -105,7 +105,7 @@ const ProjectPreview = () => {
           </div>
         </div>
 
-        <div className="col-md-6">
+        <div className="col-md-9">
           {selectedLocation ? (
             <Project
               index={0}

@@ -26,7 +26,7 @@ function App() {
               element={<ProjectList/>}
             />
             <Route
-              path="/projects/:id/:location_order?"
+              path="/projects/:id/:location_id?"
               element={<ProjectPreview/>}
             />
             <Route

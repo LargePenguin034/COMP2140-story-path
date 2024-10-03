@@ -15,10 +15,14 @@ function Project({
       <div className="card-body">
         <h5>Clue</h5>
         <p>{location.clue}</p>
-        <div
-            className="location-content"
-            dangerouslySetInnerHTML={{ __html: location.location_content }}
-          />
+        {location.location_content? 
+        (
+          <div
+          className="location-content"
+          dangerouslySetInnerHTML={{ __html: location.location_content }}
+        />
+        ) : (<div></div>)}
+
         <div className="row">
           <div className="col-6">
             <h6>Location</h6>
