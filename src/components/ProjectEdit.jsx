@@ -220,11 +220,24 @@ const ProjectForm = () => {
             <option value="Display all locations">Display all locations</option>
           </Form.Select>
         </Form.Group>
+        
+        {success && (
+        <div className={`alert alert-success ${fade ? "fade-out" : ""}`}>
+          {success}
+        </div>
+      )}
+
+      {error && (
+        <div className={`alert alert-danger ${fade ? "fade-out" : ""}`}>
+          {error}
+        </div>
+      )}
 
         {/* Submit Button */}
         <Button variant="primary" type="submit">
           Submit
         </Button>
+
       </Form>
     </div>
   );

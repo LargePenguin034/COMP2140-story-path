@@ -7,6 +7,7 @@ import {
   deleteLocation,
   getProject,
 } from "../data/projects";
+import { QRCodeSVG } from "qrcode.react";
 
 function LocationList() {
   const [locations, setLocations] = useState([]);
@@ -108,6 +109,26 @@ function LocationList() {
     }
   };
 
+  const handlePrintQRCode = (location) => {
+    const printContent = document.getElementById(`qrcode-${location.id}`);
+    const WindowPrt = window.open("", "", "width=600,height=600");
+    WindowPrt.document.write(printContent.outerHTML);
+    WindowPrt.document.close();
+    WindowPrt.focus();
+    WindowPrt.print();
+    WindowPrt.close();
+  };
+
+  const handlePrintAllQRCodes = () => {
+    const printContent = document.getElementById("all-qrcodes");
+    const WindowPrt = window.open("", "", "width=800,height=600");
+    WindowPrt.document.write(printContent.outerHTML);
+    WindowPrt.document.close();
+    WindowPrt.focus();
+    WindowPrt.print();
+    WindowPrt.close();
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -119,22 +140,37 @@ function LocationList() {
   return (
     <div>
       <div className="container mb-3">
-              <div className="row mb-3">
-        <div className="col-9">
-          <h1>{project.title}</h1>
+        <div className="row mb-3">
+          <div className="col-9">
+            <h1>{project.title}</h1>
+          </div>
+          <div className="col-3 d-flex justify-content-end">
+            <button
+              className="btn btn-danger"
+              onClick={() => navigate(`/projects`)}
+            >
+              Back to projects
+            </button>
+          </div>
         </div>
-        <div className="col-3 d-flex justify-content-end">
-          <button
-            className="btn btn-danger"
-            onClick={() => navigate(`/projects`)}
-          >
-            Back to projects
-          </button>
+        <div className="row">
+          <div className="col-6 d-flex">
+            <Link
+              to={`/locationedit/${project.id}`}
+              className="btn btn-primary"
+            >
+              Add Location
+            </Link>
+          </div>
+          <div className="col-6 d-flex justify-content-end">
+            <button
+              className="btn btn-success"
+              onClick={() => handlePrintAllQRCodes()}
+            >
+              Print All QR Codes
+            </button>
+          </div>
         </div>
-      </div>
-        <Link to={`/locationedit/${project.id}`} className="btn btn-primary">
-          Add Location
-        </Link>
       </div>
       <div className="container">
         <ul className="list-group">
@@ -184,7 +220,11 @@ function LocationList() {
                     >
                       Delete
                     </button>
-                    <button className="btn btn-outline-success" type="button">
+                    <button
+                      className="btn btn-outline-success"
+                      type="button"
+                      onClick={() => handlePrintQRCode(location)}
+                    >
                       Print QR Code
                     </button>
                   </div>

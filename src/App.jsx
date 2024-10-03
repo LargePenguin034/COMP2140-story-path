@@ -18,7 +18,7 @@ function App() {
       <div>
         <Header brandText="STORYPATH" navLinks={navLinks} />
 
-        <div className="container mt-5">
+        <div className="container mt-5 pb-5">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

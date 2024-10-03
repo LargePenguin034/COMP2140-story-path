@@ -21,6 +21,10 @@ function ProjectList() {
     setProjects(newProject);
   };
 
+  const handlePreview = (projectId) => {
+    navigate(`/projects/${projectId}`)
+  }
+
   // Fetch projects from API when the component mounts
   useEffect(() => {
     const fetchProjects = async () => {
@@ -51,13 +55,9 @@ function ProjectList() {
             >
               <div className="col-6">
                 <div className="fw-bold">
-                  <Link
-                    to={`/projects/${project.id}`}
-                    className="text-decoration-none"
-                  >
-                    {project.title}{" "}
+                    {project.title}
                     <span
-                      className={`badge rounded-pill ${
+                      className={`badge rounded-pill ms-3 ${
                         project.is_published
                           ? "text-bg-success"
                           : "text-bg-secondary"
@@ -65,13 +65,19 @@ function ProjectList() {
                     >
                       {project.is_published ? "Published" : "Not Published"}
                     </span>
-                  </Link>
                 </div>
                 {project.description}
               </div>
 
               <div className="d-flex ms-auto align-self-start">
                 <div className="input-group">
+                <button
+                    className="btn btn-outline-success"
+                    type="button"
+                    onClick={() => handlePreview(project.id)}
+                  >
+                    Preview
+                  </button>
                   <button
                     className="btn btn-outline-warning"
                     type="button"
@@ -80,14 +86,14 @@ function ProjectList() {
                     Edit
                   </button>
                   <button
-                    className="btn btn-outline-primary ms-2"
+                    className="btn btn-outline-primary"
                     type="button"
                     onClick={() => handleViewLocations(project.id)}
                   >
                     View Locations
                   </button>
                   <button
-                    className="btn btn-outline-danger ms-2"
+                    className="btn btn-outline-danger"
                     type="button"
                     onClick={() => handleDelete(project.id)}
                   >
