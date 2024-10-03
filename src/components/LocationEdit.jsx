@@ -5,6 +5,7 @@ import { Form, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { getLocation } from "../data/projects";
 import { updateLocation, createLocation } from "../data/projects";
+import LocationPicker from "./LocationPicker";
 
 const LocationForm = () => {
   const [formData, setFormData] = useState({
@@ -23,25 +24,24 @@ const LocationForm = () => {
   const navigate = useNavigate();
   // Fetch the location data when id is present
 
-    // Quill toolbar options
-    const modules = {
-      toolbar: {
-        container: [
-          [{ header: "1" }, { header: "2" }, { font: [] }],
-          [{ size: [] }],
-          ["bold", "italic", "underline", "strike", "blockquote"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["link", "image"],
-          ["clean"],
-        ],
-      },
-    };
+  // Quill toolbar options
+  const modules = {
+    toolbar: {
+      container: [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [{ size: [] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image"],
+        ["clean"],
+      ],
+    },
+  };
 
   useEffect(() => {
     if (id) {
       // Simulate API call to get location data based on id
       getLocation(id).then((data) => {
-        console.log(data)
         if (data.length > 0) {
           setFormData({
             location_name: data[0].location_name || "",
@@ -49,10 +49,10 @@ const LocationForm = () => {
             location_position: data[0].location_position || "",
             longitude: data[0].location_position
               .replace(/[()]/g, "")
-              .split(",")[0],
+              .split(",")[1],
             latitude: data[0].location_position
               .replace(/[()]/g, "")
-              .split(",")[1],
+              .split(",")[0],
             score_points: data[0].score_points || "",
             clue: data[0].clue || "",
             location_content: data[0].location_content || "",
@@ -68,6 +68,15 @@ const LocationForm = () => {
     }
   }, [id]);
 
+  const handleLocationSelect = (coordinates) => {
+    setFormData({
+      ...formData,
+      longitude: coordinates["lng"],
+      latitude: coordinates["lat"],
+    });
+  };
+
+
   const handleEditorChange = (content) => {
     setFormData({ ...formData, location_content: content });
   };
@@ -82,7 +91,7 @@ const LocationForm = () => {
     const dataCreation = {
       location_name: formData.location_name,
       location_trigger: formData.location_trigger,
-      location_position: `${formData.longitude},${formData.latitude}`,
+      location_position: `${formData.latitude},${formData.longitude}`,
       score_points: formData.score_points,
       clue: formData.clue,
       location_content: formData.location_content,
@@ -174,6 +183,13 @@ const LocationForm = () => {
           </Form.Select>
         </Form.Group>
 
+        <label>Location Picker:</label>
+        <LocationPicker
+          formData={formData}
+          setFormData={setFormData}
+          onLocationSelect={handleLocationSelect}
+        />
+
         {/* Longitude and Latitude Inputs Side by Side */}
         <Form.Group className="mb-3">
           <div className="row">
@@ -185,6 +201,9 @@ const LocationForm = () => {
                 placeholder="Enter Longitude"
                 value={formData.longitude}
                 onChange={handleChange}
+                min="-180"
+                max="180"
+                step="any"
                 required
               />
             </div>
@@ -197,6 +216,9 @@ const LocationForm = () => {
                 placeholder="Enter Latitude"
                 value={formData.latitude}
                 onChange={handleChange}
+                min="-90"
+                max="90"
+                step="any"
                 required
               />
             </div>
@@ -235,7 +257,7 @@ const LocationForm = () => {
           <ReactQuill
             value={formData.location_content}
             onChange={handleEditorChange}
-            modules={modules} 
+            modules={modules}
           />
         </Form.Group>
 
