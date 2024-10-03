@@ -7,9 +7,8 @@ import {
   deleteLocation,
   getProject,
 } from "../data/projects";
-import jsPDF from 'jspdf';
-import QRCode from 'qrcode';
-
+import jsPDF from "jspdf";
+import QRCode from "qrcode";
 
 function LocationList() {
   const [locations, setLocations] = useState([]);
@@ -111,41 +110,80 @@ function LocationList() {
     }
   };
 
-  const generatePDF = async (project, location) => {
+  const handleDownloadQRCodes = async (location) => {
     const doc = new jsPDF();
-
     try {
-        // Generate QR code image as data URL
-        const qrCodeImageUrl = await QRCode.toDataURL(`http://localhost:5173/projects/4517/0`, {
-            width: 150, // Width of the QR code
-            margin: 1, // Margin around the QR code
-        });
+      // Generate QR code image as data URLS
+      const qrCodeImageUrl = await QRCode.toDataURL(
+        `http://localhost:5173/projects/${project.id}/${location.id}`,
+        {
+          width: 150, // Width of the QR code
+          margin: 1, // Margin around the QR code
+        }
+      );
 
-        // Get the dimensions of the PDF
-        const pdfWidth = doc.internal.pageSize.getWidth();
-        const pdfHeight = doc.internal.pageSize.getHeight();
+      // Get the dimensions of the PDF
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const pdfHeight = doc.internal.pageSize.getHeight();
 
-        // Calculate position to center the QR code
-        const x = (pdfWidth - 150) / 2; // Centering horizontally
-        const y = (pdfHeight - 150) / 2; // Centering vertically
+      // Calculate position to center the QR code
+      const x = (pdfWidth - 150) / 2; // Centering horizontally
+      const y = (pdfHeight - 150) / 2; // Centering vertically
 
-        // Add QR code image to the PDF
-        doc.addImage(qrCodeImageUrl, 'PNG', x, y, 150, 150);
+      // Add QR code image to the PDF
+      doc.addImage(qrCodeImageUrl, "PNG", x, y, 150, 150);
 
-        // Add additional text below the QR code
-        doc.text(`${location.location_name}`, pdfWidth / 2, y + 160, { align: "center" });
+      // Add additional text below the QR code
+      doc.text(`${location.location_name}`, pdfWidth / 2, y + 160, {
+        align: "center",
+      });
 
-        // Save the PDF
-        doc.save(`${project.title}-${location.location_name}.pdf`);
+      // Save the PDF
+      doc.save(`${project.title}-${location.location_name}.pdf`);
     } catch (error) {
-        console.error('Error generating QR code:', error);
+      console.error("Error generating QR code:", error);
     }
-};
-
+  };
 
   const handleDownloadAllQRCodes = async () => {
-    for (const location of locations) {
-      handleDownloadQRCode(location);
+    const doc = new jsPDF();
+    try {
+      // Get the dimensions of the PDF
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const pdfHeight = doc.internal.pageSize.getHeight();
+
+      // Calculate position to center the QR code
+      const x = (pdfWidth - 150) / 2; // Centering horizontally
+      const y = (pdfHeight - 150) / 2; // Centering vertically
+
+      for (const location in locations) {
+        console.log(locations[location]);
+
+        const qrCodeImageUrl = await QRCode.toDataURL(
+          `http://localhost:5173/projects/${project.id}/${location.id}`,
+          {
+            width: 150, // Width of the QR code
+            margin: 1, // Margin around the QR code
+          }
+        );
+        // Add QR code image to the PDF
+        doc.addImage(qrCodeImageUrl, "PNG", x, y, 150, 150);
+
+        // Add additional text below the QR code
+        doc.text(`${locations[location].location_name}`, pdfWidth / 2, y + 160, {
+          align: "center",
+        });
+
+        // Add a new page if not the last location
+        if (location < locations.length - 1) {
+          doc.addPage();
+        }
+      }
+
+      // Save the PDF
+      doc.save(`${project.title}-All.pdf`);
+    } catch (error) {
+      console.error("Error generating QR code:", error);
     }
   };
 
@@ -243,7 +281,7 @@ function LocationList() {
                     <button
                       className="btn btn-outline-success"
                       type="button"
-                      onClick={() => generatePDF(project, location)}
+                      onClick={() => handleDownloadQRCodes(location)}
                     >
                       Download QR Code
                     </button>
