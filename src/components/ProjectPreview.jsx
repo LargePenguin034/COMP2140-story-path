@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getLocations, getProject } from "../data/projects";
-import Project from "./project";
+import Project from "./Project";
 
 const ProjectPreview = () => {
   const [locations, setLocations] = useState([]);
